@@ -4,21 +4,19 @@
 #include <QGraphicsScene>
 #include <QTimer>
 #include <QTransform>
+#include <QParallelAnimationGroup>
 
 #include "game/game.h"
-#include "view/view.h"
 #include "bird/bird.h"
 #include "scene/scene.h"
 
 
-Physics::Physics(Game *parent_game, int tickRate, bool complexAnalyse, bool isOnlyGround, qreal speedFactor, bool isCollisionDetectionDisabled)
- :  speedfactor(speedFactor), collisionDetectionDisabled(isCollisionDetectionDisabled), game(parent_game), complexAnalysis(complexAnalyse), onlyGround(isOnlyGround), updateInterval(tickRate)
+Physics::Physics(Game *parent_game, int tickRate, bool isOnlyGround, qreal speedFactor, bool isCollisionDetectionDisabled)
+ :  speedfactor(speedFactor), collisionDetectionDisabled(isCollisionDetectionDisabled), game(parent_game), onlyGround(isOnlyGround), updateInterval(tickRate)
 {
     _transform = new QTransform();
 
     bird = game->scene->bird;
-
-    pipeCriticX = pipeCriticXFinder(*(game->scene->pipe[0][0]));
 
     pipeMarkers[0] = 0;
     pipeMarkers[1] = 0;
@@ -81,62 +79,10 @@ void Physics::moveGround()
     game->scene->ground->setPos(game->scene->ground->pos().x() - (PHYSICS_UNIT_MOVE_RATE(game->getScreenWidth()) * speedfactor), game->scene->ground->pos().y());
 }
 
-
-int Physics::pipeCriticXFinder(const QGraphicsPixmapItem& item_pipe)
-{
-    int xVal = 0;
-    QImage refPipe = item_pipe.pixmap().toImage();
-
-    while(refPipe.pixel(xVal, refPipe.height() / 2) == 0)
-    {
-        ++xVal;
-    }
-    ++xVal;
-
-    return xVal;
-}
-
 bool Physics::isOnlyGround()
 {
     return onlyGround;
 }
-
-bool Physics::collisionCheckComplex(const QGraphicsPixmapItem& item_pipe)
-{
-    _itemPipe.x = item_pipe.x();
-    _itemPipe.y = item_pipe.y();
-    _itemPipe.width = item_pipe.pixmap().width();
-    _itemPipe.height = item_pipe.pixmap().height();
-
-    *_transform = (game->graphicsView->transform());
-
-    if((bird->x() > _itemPipe.x) && (bird->x() < _itemPipe.x + _itemPipe.width))
-    {
-        for(qreal b = 0; b <= (_itemPipe.width); ++b)
-        {
-            if(((game->scene->itemAt(_itemPipe.x + b, _itemPipe.y, *_transform) == bird) ||
-                (game->scene->itemAt(_itemPipe.x + b, _itemPipe.y + _itemPipe.height, *_transform))) &&
-                    ((bird->pixmap().toImage().pixel(bird->mapFromScene(_itemPipe.x + b, _itemPipe.y).toPoint()) != 0) ||
-                     (bird->pixmap().toImage().pixel(bird->mapFromScene(_itemPipe.x + b, _itemPipe.y + _itemPipe.height).toPoint()) != 0)))
-            {
-                return true;
-            }
-        }
-    }
-
-    for(qreal a = 0; a <= (_itemPipe.height); ++a)
-    {
-        if((game->scene->itemAt(_itemPipe.x + pipeCriticX, _itemPipe.y + a, *_transform) == bird) &&
-                (bird->pixmap().toImage().pixel(bird->mapFromScene(_itemPipe.x + pipeCriticX, _itemPipe.y + a).toPoint()) != 0))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
 
 bool Physics::collisionCheck()
 {
@@ -155,22 +101,14 @@ bool Physics::collisionCheck()
             (birdRect.height > game->scene->pipe[1][1]->pos().y() ||
              birdRect.height < game->scene->pipe[0][1]->pos().y() + game->scene->pipe[0][1]->boundingRect().height()))
     {
-        if((complexAnalysis && (collisionCheckComplex(*game->scene->pipe[1][1]) ||
-                                collisionCheckComplex(*game->scene->pipe[0][1]))) || !complexAnalysis)
-        {
             return bTrue;
-        }
     }
     else if((birdRect.width >= game->scene->pipe[1][1]->pos().x() &&
              birdRect.x <= game->scene->pipe[1][1]->pos().x() + game->scene->pipe[1][1]->boundingRect().width()) &&
             (birdRect.height > game->scene->pipe[1][1]->pos().y() ||
              birdRect.y < game->scene->pipe[0][1]->pos().y() + game->scene->pipe[0][1]->boundingRect().height()))
     {
-        if((complexAnalysis && (collisionCheckComplex(*game->scene->pipe[1][1]) ||
-                                collisionCheckComplex(*game->scene->pipe[0][1]))) || !complexAnalysis)
-        {
             return bTrue;
-        }
     }
 
     if(((birdRect.width > game->scene->pipe[1][2]->pos().x()) &&
@@ -178,22 +116,14 @@ bool Physics::collisionCheck()
             (birdRect.height > game->scene->pipe[1][2]->pos().y() ||
              birdRect.height < game->scene->pipe[0][2]->pos().y() + game->scene->pipe[0][2]->boundingRect().height()))
     {
-        if((complexAnalysis && (collisionCheckComplex(*game->scene->pipe[1][2]) ||
-                                collisionCheckComplex(*game->scene->pipe[0][2]))) || !complexAnalysis)
-        {
             return bTrue;
-        }
     }
     else if((birdRect.width >= game->scene->pipe[1][2]->pos().x() &&
              birdRect.x <= game->scene->pipe[1][2]->pos().x() + game->scene->pipe[1][2]->boundingRect().width()) &&
             (birdRect.height > game->scene->pipe[1][2]->pos().y() ||
              birdRect.y < game->scene->pipe[0][2]->pos().y() + game->scene->pipe[0][2]->boundingRect().height()))
     {
-        if((complexAnalysis && (collisionCheckComplex(*game->scene->pipe[1][2]) ||
-                                collisionCheckComplex(*game->scene->pipe[0][2]))) || !complexAnalysis)
-        {
             return bTrue;
-        }
     }
 
     if(((birdRect.width > game->scene->pipe[1][0]->pos().x()) &&
@@ -201,22 +131,14 @@ bool Physics::collisionCheck()
             (birdRect.height > game->scene->pipe[1][0]->pos().y() ||
              birdRect.height < game->scene->pipe[0][0]->pos().y() + game->scene->pipe[0][0]->boundingRect().height()))
     {
-        if((complexAnalysis && (collisionCheckComplex(*game->scene->pipe[1][0]) ||
-                                collisionCheckComplex(*game->scene->pipe[0][0]))) || !complexAnalysis)
-        {
             return bTrue;
-        }
     }
     else if((birdRect.width >= game->scene->pipe[1][0]->pos().x() &&
              birdRect.x <= game->scene->pipe[1][0]->pos().x() + game->scene->pipe[1][0]->boundingRect().width()) &&
             (birdRect.height > game->scene->pipe[1][0]->pos().y() ||
              birdRect.y < game->scene->pipe[0][0]->pos().y() + game->scene->pipe[0][0]->boundingRect().height()))
     {
-        if((complexAnalysis && (collisionCheckComplex(*game->scene->pipe[1][0]) ||
-                                collisionCheckComplex(*game->scene->pipe[0][0]))) || !complexAnalysis)
-        {
             return bTrue;
-        }
     }
 
 
@@ -234,7 +156,6 @@ bool Physics::collisionCheck()
         game->updateScore();
         markers[0] = 1;
         markers[2] = 0;
-        game->birdClosestPipe = 2;
     }
     else if((birdRect.x >= game->scene->pipe[1][1]->pos().x() + game->scene->pipe[1][1]->boundingRect().width()) &&
             markers[1] == 0 && (birdRect.width < game->scene->pipe[1][2]->pos().x()))
@@ -242,7 +163,6 @@ bool Physics::collisionCheck()
         game->updateScore();
         markers[0] = 0;
         markers[1] = 1;
-        game->birdClosestPipe = 0;
     }
     else if((birdRect.x >= game->scene->pipe[1][2]->pos().x() + game->scene->pipe[1][2]->boundingRect().width()) &&
             markers[2] == 0 && (birdRect.width < game->scene->pipe[1][0]->pos().x()))
@@ -250,7 +170,6 @@ bool Physics::collisionCheck()
         game->updateScore();
         markers[1] = 0;
         markers[2] = 1;
-        game->birdClosestPipe = 1;
     }
 
     return false;
@@ -268,7 +187,7 @@ void Physics::movePipes()
 
         if(pipeMarkers[1])
         {
-            game->scene->pipe[1][1]->setPos(game->getScreenWidth() + (game->scene->pipe[1][1]->boundingRect().width()) + (game->getScreenWidth() / 2.6),randInt(game->getScreenHeight()/3.7,game->getScreenHeight() / 1.4));
+            game->scene->pipe[1][1]->setPos(game->scene->pipe[1][2]->pos().x() + (game->scene->pipe[1][1]->boundingRect().width()) + (game->getScreenWidth() / 2.6),randInt(game->getScreenHeight()/3.7,game->getScreenHeight() / 1.4));
         }
         else
         {
@@ -281,7 +200,7 @@ void Physics::movePipes()
     {
         if(pipeMarkers[1])
         {
-            game->scene->pipe[1][0]->setPos(game->getScreenWidth() + game->scene->pipe[1][0]->boundingRect().width() + (game->getScreenWidth() / 2.6),randInt(game->getScreenHeight()/3.7,game->getScreenHeight() / 1.4));
+            game->scene->pipe[1][0]->setPos(game->scene->pipe[1][1]->pos().x() + game->scene->pipe[1][0]->boundingRect().width() + (game->getScreenWidth() / 2.6),randInt(game->getScreenHeight()/3.7,game->getScreenHeight() / 1.4));
         }
         else
         {
@@ -294,7 +213,7 @@ void Physics::movePipes()
     {
         if(pipeMarkers[1])
         {
-            game->scene->pipe[1][2]->setPos(game->getScreenWidth() + game->scene->pipe[1][2]->boundingRect().width() + (game->getScreenWidth() / 2.6),randInt(game->getScreenHeight() / 3.7,game->getScreenHeight() / 1.4));
+            game->scene->pipe[1][2]->setPos(game->scene->pipe[1][0]->pos().x() + game->scene->pipe[1][2]->boundingRect().width() + (game->getScreenWidth() / 2.6),randInt(game->getScreenHeight() / 3.7,game->getScreenHeight() / 1.4));
         }
         else
         {

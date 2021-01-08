@@ -15,7 +15,6 @@ void ButtonFuncs::play(Game *game_instance){
 
     if(!game_instance->isGameFinished()){
         game_instance->prepareFirstGame();
-        game_instance->scene->fadeGroup(GROUP_FIRSTSCREEN, false, 500, GROUP_GAMEPLAY);
     } else {
         game_instance->prepareNewRound();
     }

@@ -15,15 +15,9 @@ public:
     ~MainWindow();
 
 protected:
-    class View *graphicsView;
+    class QGraphicsView *graphicsView;
 
     class Game *game;
-
-    class QSettings *settings;
-
-    class StrobeAPI *strobe;
-
-    class StrobeDialog *strobeDialog;
 
     qreal scaleFactor;
 

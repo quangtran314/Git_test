@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "common.h"
+#include <QGraphicsView>
 
 
 class Game
@@ -23,12 +24,11 @@ private:
     void loadConfiguration();
 
 protected:
-    class QSettings *registry;
 
     class Physics *physics;
 
 public:
-    Game(class View *GraphicsView, class QSettings *settings, int windowWidth, int windowHeight);
+    Game(class QGraphicsView *GraphicsView, int windowWidth, int windowHeight);
     virtual ~Game();
 
     void clickEvent();
@@ -51,7 +51,7 @@ public:
     qreal getScaleFactor();
 
     class Scene *scene;
-    class View *graphicsView;
+    class QGraphicsView *graphicsView;
 };
 
 #endif // GAME_H

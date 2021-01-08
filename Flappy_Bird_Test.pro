@@ -31,7 +31,6 @@ SOURCES += \
     mainwindow/mainwindow.cpp \
     physics/physics.cpp \
     scene/scene.cpp \
-    view/view.cpp
 
 HEADERS += \
     bird/bird.h \
@@ -41,7 +40,6 @@ HEADERS += \
     mainwindow/mainwindow.h \
     physics/physics.h \
     scene/scene.h \
-    view/view.h
 
 RESOURCES += \
     assets/Resource.qrc
