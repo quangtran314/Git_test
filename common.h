@@ -1,23 +1,3 @@
-/*
-MIT License
-Copyright (c) 2018 fuzun
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -137,20 +117,6 @@ SOFTWARE.
 #define IMG_SOUND_DISABLED PREFIX_IMG "soundDisabled.png"
 #define IMG_AI PREFIX_IMG "ai.png"
 #define IMG_AIPLAY PREFIX_IMG "aiPlay.png"
-#define SND_DIE PREFIX_SND "die.wav"
-#define SND_HIT PREFIX_SND "hit.wav"
-#define SND_POINT PREFIX_SND "point.wav"
-#define SND_SWOOSHING PREFIX_SND "swooshing.wav"
-#define SND_WING PREFIX_SND "wing.wav"
-
-
-#if STROBE_ENABLED == FALSE
-#define STROBE_DISABLED
-#endif
-
-#if AI_ENABLED == FALSE
-#define AI_DISABLED
-#endif
 
 #define ARRAY_SIZE(ARR) (sizeof(ARR) / sizeof(*(ARR)))
 
