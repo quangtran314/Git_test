@@ -1,1 +1,1 @@
-### qt project
+### qt project : game flappy bird
