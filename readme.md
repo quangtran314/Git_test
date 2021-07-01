@@ -1,1 +1,1 @@
-### qt project : game flappy bird
+### qt framwork project : game flappy bird
