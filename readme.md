@@ -1,1 +1,1 @@
-### qt framwork projec
+### qt framwork project
